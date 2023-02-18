@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CrosshairBot.Application\CrosshairBot.Services.csproj" />
-    <ProjectReference Include="..\CrosshairBot.Core\CrosshairBot.Domain.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Domain\CrosshairBot.Domain.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Repository\CrosshairBot.Repository.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Services\CrosshairBot.Services.csproj" />
   </ItemGroup>
 
 </Project>

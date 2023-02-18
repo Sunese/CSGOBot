@@ -1,4 +1,3 @@
-using CrosshairBot.Domain;
 using CrosshairBot.Domain.SlashCommands;
 using CrosshairBot.Domain.SlashCommands.Handlers;
 using Discord;

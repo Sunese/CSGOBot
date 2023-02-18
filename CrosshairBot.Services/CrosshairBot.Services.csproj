@@ -12,6 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CrosshairBot.Core\CrosshairBot.Domain.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Domain\CrosshairBot.Domain.csproj" />
   </ItemGroup>
 </Project>

@@ -38,6 +38,7 @@ public class SlashCommands : ISlashCommands
             // TODO: enum parsing + having some correlation between enum type and what handler to call
             case "hello":
                 await HandleHelloCommands.HandleHelloCommand(command);
+                logger.LogDebug("Sent hello command!");
                 break;
             default:
                 throw new Exception("Undefined command");
