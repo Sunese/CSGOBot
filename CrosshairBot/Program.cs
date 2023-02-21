@@ -5,6 +5,8 @@ using Discord.WebSocket;
 using MediatR;
 using Serilog;
 
+using Microsoft.Extensions.Configuration;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog.Events;
@@ -27,6 +29,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         //services.AddScoped<IExampleScopedService, ExampleScopedService>();
         //services.AddSingleton<IExampleSingletonService, ExampleSingletonService>();
         //services.AddTransient<ServiceLifetimeReporter>();
+        //services.AddSingleton<IConfiguration>(provider => configuration);
     })
     .UseSerilog()
     .Build();

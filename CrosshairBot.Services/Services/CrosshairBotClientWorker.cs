@@ -3,6 +3,7 @@ using CrosshairBot.Domain.SlashCommands.Handlers;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.CompilerServices;
@@ -29,7 +30,15 @@ namespace CrosshairBot.Application.Services
             try
             {
                 logger.LogInformation("CrosshairBotClientWorker service started!");
-                var token = File.ReadAllText(@"C:\Users\Sune\git\CrosshairBot\secrets\token.txt");
+
+                // TODO handle this properly s.t. it can be run from any directory and both windows and mac
+                // /users/sune/git/crosshairbot/CrosshairBot
+                string workingDirectory = Environment.CurrentDirectory;
+                // secrets directory is one level up
+                string secretsDirectory = Path.GetFullPath(Path.Combine(workingDirectory, @"../Secrets"));
+                string tokenFile = Path.Combine(secretsDirectory, "token.txt");
+                string token = File.ReadAllText(tokenFile);
+                
 
                 await client.LoginAsync(TokenType.Bot, token);
                 await client.StartAsync();
@@ -57,9 +66,6 @@ namespace CrosshairBot.Application.Services
                     await commands.SetSlashCommands(list);
                     client.SlashCommandExecuted += commands.Handle;
                 };
-
-                // 
-                //await ExecuteAsync(new CancellationToken
 
             }
             catch (ApplicationCommandException exception)
