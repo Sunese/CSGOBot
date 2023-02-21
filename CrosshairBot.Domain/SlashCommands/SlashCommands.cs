@@ -7,7 +7,8 @@ namespace CrosshairBot.Domain.SlashCommands;
 
 public enum SlashCommandsEnum
 {
-    hello
+    hello,
+    crosshairOfTheDay
 }
 
 public class SlashCommands : ISlashCommands
@@ -26,8 +27,10 @@ public class SlashCommands : ISlashCommands
     {
         foreach (var command in commands)
         {
-            var guild = client.Guilds.FirstOrDefault();
-            await guild.CreateApplicationCommandAsync(command.Build());
+            foreach (var guild in client.Guilds)
+            {
+                await guild.CreateApplicationCommandAsync(command.Build());
+            }
         }
     }
 
@@ -40,8 +43,12 @@ public class SlashCommands : ISlashCommands
                 await HandleHelloCommands.HandleHelloCommand(command);
                 logger.LogDebug("Sent hello command!");
                 break;
+            case "crosshairoftheweek":
+                await CrosshairCommandsHandler.Respond(command);
+                break;
             default:
-                throw new Exception("Undefined command");
+                await DefaultCommandsHandler.NotRecognizedCommand(command);
+                break;
         }
     }
 }

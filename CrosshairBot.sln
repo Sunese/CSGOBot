@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrosshairBot.Domain", "Cros
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrosshairBot.Services", "CrosshairBot.Services\CrosshairBot.Services.csproj", "{E7935DC8-5CE1-4A34-ACBB-C0F1F2EDEC69}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrosshairBot.UI", "CrosshairBot.UI\CrosshairBot.UI.csproj", "{2805A2CD-7BA8-4BEE-8749-B233583340D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrosshairBot", "CrosshairBot.UI\CrosshairBot.csproj", "{2805A2CD-7BA8-4BEE-8749-B233583340D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

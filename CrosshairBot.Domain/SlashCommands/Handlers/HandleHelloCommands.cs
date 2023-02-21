@@ -15,8 +15,8 @@ public static class HandleHelloCommands
     {
         var embedBuilder = new EmbedBuilder()
             .WithAuthor(command.User)
-            .WithTitle("Hello!")
-            .WithDescription("This is a description that says hello!")
+            .WithTitle("FUCK DIG HAGEL!")
+            .WithDescription("FUCKING LORTE SVIN!")
             .WithColor(Color.Green)
             .WithCurrentTimestamp();
 

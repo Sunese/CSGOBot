@@ -21,7 +21,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddHostedService<CrosshairBotClientWorker>();
-        services.AddSingleton<DiscordSocketClient>();
+        services.AddSingleton<DiscordSocketClient>(); // <-- can be manually insdtantiated to pass configs
         services.AddSingleton<ISlashCommands, SlashCommands>();
         //services.AddTransient<IExampleTransientService, ExampleTransientService>();
         //services.AddScoped<IExampleScopedService, ExampleScopedService>();

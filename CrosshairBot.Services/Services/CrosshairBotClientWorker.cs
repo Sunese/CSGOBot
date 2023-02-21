@@ -37,11 +37,22 @@ namespace CrosshairBot.Application.Services
                 client.Ready += async () =>
                 {
                     logger.LogInformation("Bot is connected");
-                    // Sample command - should be moved somewhere else
-                    var command = new SlashCommandBuilder();
-                    command.WithName("hello");
-                    command.WithDescription("This is my first slash command!");
-                    var list = new List<SlashCommandBuilder>() { command };
+
+
+                    // Sample commands - should be moved somewhere else
+
+                    var list = new List<SlashCommandBuilder>();
+
+                    var helloCommand = new SlashCommandBuilder();
+                    helloCommand.WithName("hello");
+                    helloCommand.WithDescription("This is my first slash command!");
+                    list.Add(helloCommand);
+                    
+                    var xhairofTheWeekCommand = new SlashCommandBuilder();
+                    xhairofTheWeekCommand.WithName("crosshairoftheweek");
+                    xhairofTheWeekCommand.WithDescription("The crosshair of current week's top player");
+                    list.Add(xhairofTheWeekCommand);
+                    
 
                     await commands.SetSlashCommands(list);
                     client.SlashCommandExecuted += commands.Handle;
