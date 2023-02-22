@@ -16,6 +16,7 @@ public class SlashCommands : ISlashCommands
     private ILogger<SlashCommands> logger;
     private DiscordSocketClient client;
     private List<SlashCommandBuilder> commands;
+    private ICrosshairCommandsHandler crosshairCommandsHandler;
 
     public SlashCommands(ILogger<SlashCommands> logger, DiscordSocketClient client)
     {
@@ -44,7 +45,9 @@ public class SlashCommands : ISlashCommands
                 logger.LogDebug("Sent hello command!");
                 break;
             case "crosshairoftheweek":
-                await CrosshairCommandsHandler.Respond(command);
+                logger.LogDebug("caught xhair command!");
+                await crosshairCommandsHandler.Respond(command);
+                logger.LogDebug("sent xhair command");
                 break;
             default:
                 await DefaultCommandsHandler.NotRecognizedCommand(command);

@@ -4,6 +4,7 @@ using CrosshairBot.Domain.SlashCommands;
 using Discord.WebSocket;
 using MediatR;
 using Serilog;
+using CrosshairBot.Domain.SlashCommands.Handlers;
 
 using Microsoft.Extensions.Configuration;
 
@@ -30,6 +31,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         //services.AddSingleton<IExampleSingletonService, ExampleSingletonService>();
         //services.AddTransient<ServiceLifetimeReporter>();
         //services.AddSingleton<IConfiguration>(provider => configuration);
+        services.AddSingleton<ICrosshairCommandsHandler, CrosshairCommandsHandler>();
     })
     .UseSerilog()
     .Build();
