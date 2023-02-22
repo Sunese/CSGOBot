@@ -31,14 +31,16 @@ namespace CrosshairBot.Application.Services
             {
                 logger.LogInformation("CrosshairBotClientWorker service started!");
 
-                // TODO handle this properly s.t. it can be run from any directory and both windows and mac
-                // /users/sune/git/crosshairbot/CrosshairBot
-                string workingDirectory = Environment.CurrentDirectory;
-                // secrets directory is one level up
-                string secretsDirectory = Path.GetFullPath(Path.Combine(workingDirectory, @"../Secrets"));
-                string tokenFile = Path.Combine(secretsDirectory, "token.txt");
-                string token = File.ReadAllText(tokenFile);
-                
+                //// TODO handle this properly s.t. it can be run from any directory and both windows and mac
+                //// /users/sune/git/crosshairbot/CrosshairBot
+                //string workingDirectory = Environment.CurrentDirectory;
+                //// secrets directory is one level up
+                //string secretsDirectory = Path.GetFullPath(Path.Combine(workingDirectory, @"../Secrets"));
+                //string tokenFile = Path.Combine(secretsDirectory, "token.txt");
+                //string token = File.ReadAllText(tokenFile);
+
+
+                var token = Environment.GetEnvironmentVariable("DiscordBotToken");
 
                 await client.LoginAsync(TokenType.Bot, token);
                 await client.StartAsync();

@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "CrosshairBot.Client": {
+    "CrosshairBot": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
