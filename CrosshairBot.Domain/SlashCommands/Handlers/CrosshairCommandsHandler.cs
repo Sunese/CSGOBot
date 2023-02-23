@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace CrosshairBot.Domain.SlashCommands.Handlers;
 
@@ -17,6 +18,7 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 
     public CrosshairCommandsHandler(ILogger<CrosshairCommandsHandler> logger)
     {
+        this.client.Timeout = TimeSpan.FromSeconds(5);
         this.logger = logger;
     }
 
@@ -97,9 +99,11 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 
     private async Task<List<PlayerStatistics>> CallHltvApi(string fullUrl)
     {
-        HttpClient client = new HttpClient();
         var response = await client.GetAsync(fullUrl);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException("");
+        }
         string responseBody = await response.Content.ReadAsStringAsync();
         var stats = JsonConvert.DeserializeObject<List<PlayerStatistics>>(responseBody);
         if (stats == null)
@@ -210,7 +214,17 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 
         var url = @$"http://localhost:3000/players/{aWeekAgoString}/{todayString}";
 
-        var statistics = await CallHltvApi(url);
+        List<PlayerStatistics> statistics = new List<PlayerStatistics>();
+
+        try
+        {
+            statistics = await CallHltvApi(url);
+        }
+        catch (HttpRequestException e)
+        {
+            await command.ModifyOriginalResponseAsync(x => x.Content = "Hltv API timed out :(");
+            return;
+        }
 
         var topPlayerOfTheWeek = statistics[0].Nickname;
 
