@@ -5,11 +5,7 @@ using Discord;
 
 namespace CrosshairBot.Domain.SlashCommands;
 
-public enum SlashCommandsEnum
-{
-    hello,
-    crosshairOfTheDay
-}
+
 
 public class SlashCommands : ISlashCommands
 {
@@ -17,6 +13,21 @@ public class SlashCommands : ISlashCommands
     private DiscordSocketClient client;
     private List<SlashCommandBuilder> commands;
     private ICrosshairCommandsHandler crosshairCommandsHandler;
+
+    public enum SlashCommandsEnum
+    {
+        hello,
+        crosshair
+    }
+
+    public enum CrosshairCommandsEnum
+    {
+        crosshairOfTheDay,
+        crosshairOfTheWeek,
+        crosshiarOfTheMonth,
+        crosshairOfTheYear,
+        crosshairOfPlayer
+    }
 
     public SlashCommands(ILogger<SlashCommands> logger, DiscordSocketClient client, ICrosshairCommandsHandler crosshairCommandsHandler)
     {
@@ -38,7 +49,6 @@ public class SlashCommands : ISlashCommands
 
     public async Task Handle(SocketSlashCommand command)
     {
-
         switch (command.Data.Name)
         {
             // TODO: enum parsing + having some correlation between enum type and what handler to call
@@ -48,6 +58,7 @@ public class SlashCommands : ISlashCommands
                 break;
             case "crosshairoftheweek":
                 logger.LogDebug("caught xhair command!");
+                await command.DeferAsync();
                 await crosshairCommandsHandler.Respond(command);
                 logger.LogDebug("sent xhair command");
                 break;

@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Net;
 using System.Reflection;
+using System.Text;
 using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
@@ -11,10 +13,29 @@ namespace CrosshairBot.Domain.SlashCommands.Handlers;
 public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 {
     private ILogger<ICrosshairCommandsHandler> logger;
+    private HttpClient client = new HttpClient();
 
     public CrosshairCommandsHandler(ILogger<CrosshairCommandsHandler> logger)
     {
         this.logger = logger;
+    }
+
+    public static string GenerateCrosshairString(Crosshair x)
+    {
+        string res = "";
+        res = res + "cl_crosshair_drawoutline " + x.cl_crosshair_drawoutline + ";"
+              + "cl_crosshair_sniper_width " + x.cl_crosshair_sniper_width + ";"
+              + "cl_crosshairalpha " + x.cl_crosshairalpha + ";"
+              + "cl_crosshaircolor " + x.cl_crosshaircolor + ";"
+              + "cl_crosshaircolor_b " + x.cl_crosshaircolor_b + ";"
+              + "cl_crosshaircolor_g " + x.cl_crosshaircolor_g + ";"
+              + "cl_crosshaircolor_r " + x.cl_crosshaircolor_r + ";"
+              + "cl_crosshairdot " + x.cl_crosshairdot + ";"
+              + "cl_crosshairgap " + x.cl_crosshairgap + ";"
+              + "cl_crosshairsize " + x.cl_crosshairsize + ";"
+              + "cl_crosshairstyle " + x.cl_crosshairstyle + ";"
+              + "cl_crosshairthickness " + x.cl_crosshairthickness + ";";
+        return res; 
     }
 
     public class Settings
@@ -28,7 +49,6 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
         //public VideoSettings VideoeSettings;
         //public MonitorSettings MonitorSettings;
         //public int DigitalVibrance;
-
     }
 
     public class Crosshair
@@ -58,6 +78,23 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
         public string Rating;
     }
 
+    public class PlayerNotFoundException : Exception
+    {
+        public PlayerNotFoundException()
+        {
+        }
+
+        public PlayerNotFoundException(string message)
+            : base(message)
+        {
+        }
+
+        public PlayerNotFoundException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
+
     private async Task<List<PlayerStatistics>> CallHltvApi(string fullUrl)
     {
         HttpClient client = new HttpClient();
@@ -74,10 +111,22 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 
     private async Task<Crosshair> ScrapeSettings(string nickname) 
     {
+
+        
+
         // TODO: scrape settings info from the website
         var prosettingsUrl = $"https://prosettings.net/players/{nickname}";
+
+        // First send a GET to see if valid URL
+        if (!(await client.GetAsync(prosettingsUrl)).IsSuccessStatusCode)
+        {
+            throw new PlayerNotFoundException();
+        }
+
         var web = new HtmlWeb();
+        
         var doc = web.Load(prosettingsUrl);
+
 
         // get the table with class name "settings"
         var settingsTables = doc.DocumentNode.SelectNodes("//table[@class='settings']");
@@ -121,7 +170,6 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
             var value = item.SelectSingleNode("td").InnerText;
             settings.Add(attribute, value);
             i++;
-
         }
 
         crosshair.cl_crosshair_drawoutline = settings["cl_crosshair_drawoutline"];
@@ -153,7 +201,7 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
     {
 
         var today = DateTime.Now;
-        var aWeekAgo = today.AddDays(-7);
+        var aWeekAgo = today.AddDays(-30);
 
         var todayString = today.ToString("yyyy-MM-dd");
         var aWeekAgoString = aWeekAgo.ToString("yyyy-MM-dd");
@@ -168,17 +216,35 @@ public class CrosshairCommandsHandler : ICrosshairCommandsHandler
 
         logger.LogInformation("Inside Respond");
 
-        var crosshairOfTopPlayer = await ScrapeSettings(topPlayerOfTheWeek);
+        var crosshairOfTopPlayer = new Crosshair();
+        var embedBuilder = new EmbedBuilder();
+
+        try
+        {
+            crosshairOfTopPlayer = await ScrapeSettings(topPlayerOfTheWeek);
+        }
+        catch (PlayerNotFoundException)
+        {
+            embedBuilder
+                .WithAuthor(command.User)
+                .WithTitle($"Player of the week is {topPlayerOfTheWeek} ⚡")
+                .WithDescription($"No crosshair info was found for player :(")
+                .WithColor(Color.Red)
+                .WithCurrentTimestamp();
+            await command.ModifyOriginalResponseAsync(x => x.Embed = embedBuilder.Build());
+            return;
+        }
 
 
-        var embedBuilder = new EmbedBuilder()
+        embedBuilder
             .WithAuthor(command.User)
-            .WithTitle($"Crosshair of the week is from {topPlayerOfTheWeek} ⚡")
-            .WithDescription($"CrosshairSize: {crosshairOfTopPlayer.cl_crosshairsize}")
+            .WithTitle($"Player of the week is {topPlayerOfTheWeek} ⚡")
+            .WithDescription(GenerateCrosshairString(crosshairOfTopPlayer))
             .WithColor(Color.Green)
             .WithCurrentTimestamp();
 
-        await command.RespondAsync(embed: embedBuilder.Build());
+        await command.ModifyOriginalResponseAsync(x => x.Embed = embedBuilder.Build());
+        return;
     }
 
 }
