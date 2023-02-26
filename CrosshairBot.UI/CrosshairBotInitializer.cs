@@ -1,26 +1,13 @@
-using System;
-using System.Threading.Tasks;
 using CrosshairBot.Core.SlashCommands;
 using CrosshairBot.Domain.SlashCommands;
-using CrosshairBot.Domain.SlashCommands.Handlers;
 using Discord;
-using Discord.Net;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.CompilerServices;
-using Newtonsoft.Json;
 
-namespace CrosshairBot.Application.Services
+namespace CrosshairBot.UI
 {
     public class CrosshairBotInitializer
     {
-        private readonly ILogger<CrosshairBotInitializer> logger;
-        private readonly DiscordSocketClient client;
-        private readonly ISlashCommands slashCommands;
-
-
         // static async method that behaves like a constructor       
         public static async Task Initialize(DiscordSocketClient client, ILogger<CrosshairBotInitializer> logger, ISlashCommands slashCommands)
         {
@@ -40,7 +27,7 @@ namespace CrosshairBot.Application.Services
 
             client.Ready += async () =>
             {
-                // TODO: register commands
+                logger.LogInformation("Bot is ready, registering slash commands.");
                 foreach (var command in slashCommands.Get())
                 {
                     foreach (var guild in client.Guilds)
@@ -48,14 +35,18 @@ namespace CrosshairBot.Application.Services
                         await guild.CreateApplicationCommandAsync(command);
                     }
                 }
+                logger.LogInformation("Done registering slash commands.");
+            };
+
+            client.SlashCommandExecuted += command =>
+            {
+                // AutoMapper here... e.g. might resolve to a HelloCommand
+
+                // E.g. we should get an already instantiated HelloCommand from
+                var resolvedCommand = ;
             };
         }
 
-        public static Task RegisterSlashCommands(DiscordSocketClient client, ILogger<CrosshairBotInitializer> logger)
-        {
 
-        }
-
-        
     }
 }

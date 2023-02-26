@@ -1,5 +1,4 @@
 using System.Reflection;
-using CrosshairBot.Application.Services;
 using CrosshairBot.Domain;
 using CrosshairBot.Domain.SlashCommands;
 using Discord.WebSocket;
@@ -14,6 +13,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog.Events;
 using System;
+using CrosshairBot.Core.SlashCommands;
+using CrosshairBot.UI;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -40,6 +41,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         //services.AddTransient<ServiceLifetimeReporter>();
         //services.AddSingleton<IConfiguration>(provider => configuration);
         services.AddSingleton<ICrosshairCommandsHandler, CrosshairCommandsHandler>();
+        services.AddTransient<HelloCommand>();
     })
     .UseSerilog()
     .Build();

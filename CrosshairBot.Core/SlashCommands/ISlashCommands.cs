@@ -9,8 +9,8 @@ namespace CrosshairBot.Domain.SlashCommands;
 
 public interface ISlashCommands
 {
-    public List<IApplicationCommand> Get();
-    public void Add();
+    public List<ApplicationCommandProperties> Get();
+    public void Add(ApplicationCommandProperties props);
     //public Task Remove();
     //public Task Update();
 }

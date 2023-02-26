@@ -11,14 +11,24 @@ namespace CrosshairBot.Domain.SlashCommands;
 
 public class SlashCommands : ISlashCommands
 {
-    private ILogger<SlashCommands> logger;
-    private DiscordSocketClient client;
-    private ICrosshairCommandsHandler crosshairCommandsHandler;
+    private ILogger<SlashCommands> _logger;
+    private DiscordSocketClient _client;
+    private HelloCommand _helloCommand;
 
-    private List<IApplicationCommand> commands = new()
+    private List<ApplicationCommandProperties> _commands = new()
     {
-        new HelloCommand()
     };
+
+    public SlashCommands(ILogger<SlashCommands> logger, DiscordSocketClient client, HelloCommand helloCommand )
+    {
+        _logger = logger;
+        _client = client;
+        _helloCommand = helloCommand;
+
+        // All slash commands are added here
+        _commands.Add(_helloCommand.Build());
+        // TODO: add more commands here
+    }
 
     //public enum SlashCommandsEnum
     //{
@@ -74,13 +84,13 @@ public class SlashCommands : ISlashCommands
     //    }
     //}
 
-    public List<IApplicationCommand> Get()
+    public List<ApplicationCommandProperties> Get()
     {
-        return commands;
+        return _commands;
     }
 
-    public void Add(IApplicationCommand command)
+    public void Add(ApplicationCommandProperties command)
     {
-        commands.Add(command);
+        _commands.Add(command);
     }
 }

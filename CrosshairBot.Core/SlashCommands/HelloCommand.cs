@@ -12,41 +12,24 @@ using Discord;
 
 namespace CrosshairBot.Core.SlashCommands;
 
-public class HelloCommand : ApplicationCommandProperties
+public class HelloCommand
 {
-    private readonly ILogger<HelloCommand> logger;
-
-    private readonly SlashCommandProperties _command;
-
-
-    internal ApplicationCommandType Type => ApplicationCommandType.Slash;
-
-    /// <summary>
-    ///    Gets or sets the discription of this command.
-    /// </summary>
-    public Optional<string> Description { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the options for this command.
-    /// </summary>
-    public Optional<List<ApplicationCommandOptionProperties>> Options { get; set; }
-
+    private readonly SlashCommandBuilder _commandBuilder;
 
     public HelloCommand()
     {
         var helloCommand = new SlashCommandBuilder();
         helloCommand.WithName("hello");
         helloCommand.WithDescription("This is my first slash command!");
-        _command = (ApplicationCommandProperties)helloCommand.Build();
+        _commandBuilder = helloCommand;
     }
 
-    internal override ApplicationCommandType GetType()
+    public SlashCommandProperties Build()
     {
-        throw new NotImplementedException();
+        return _commandBuilder.Build();
     }
 
-
-    public async Task Respond(SocketSlashCommand command)
+    public static async Task Respond(SocketSlashCommand command)
     {
         var embedBuilder = new EmbedBuilder()
             .WithAuthor(command.User)
