@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-CrosshairBot.Application-FC3B4546-C5A1-4D63-8DAC-0E333A30B41A</UserSecretsId>
+    <BaseIntermediateOutputPath>C:\Users\Sune\git\CrosshairBot\CrosshairBot.Application\obj</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CrosshairBot.Domain\CrosshairBot.Domain.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Core\CrosshairBot.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <UserSecretsId>bb6ef93f-4065-450d-828a-5591d9fd58e6</UserSecretsId>
+    <BaseIntermediateOutputPath>C:\Users\Sune\git\CrosshairBot\CrosshairBot.UI\obj</BaseIntermediateOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CrosshairBot.Domain\CrosshairBot.Domain.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Application\CrosshairBot.Application.csproj" />
+    <ProjectReference Include="..\CrosshairBot.Core\CrosshairBot.Core.csproj" />
     <ProjectReference Include="..\CrosshairBot.Repository\CrosshairBot.Repository.csproj" />
-    <ProjectReference Include="..\CrosshairBot.Services\CrosshairBot.Services.csproj" />
   </ItemGroup>
 
 </Project>

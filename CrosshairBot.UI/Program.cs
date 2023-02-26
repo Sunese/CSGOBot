@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
@@ -30,9 +31,8 @@ Environment.SetEnvironmentVariable("DiscordBotToken", secret);
 using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.AddHostedService<CrosshairBotClientWorker>();
-        services.AddSingleton<DiscordSocketClient>(); // <-- can be manually insdtantiated to pass configs
-        services.AddSingleton<ISlashCommands, SlashCommands>();
+        services.AddSingleton<DiscordSocketClient>(); // <-- can be manually instantiated to pass configs
+        //services.AddSingleton<ISlashCommands, SlashCommands>();
         //services.AddTransient<IExampleTransientService, ExampleTransientService>();
         //services.AddScoped<IExampleScopedService, ExampleScopedService>();
         //services.AddSingleton<IExampleSingletonService, ExampleSingletonService>();
@@ -40,20 +40,11 @@ using IHost host = Host.CreateDefaultBuilder(args)
         //services.AddSingleton<IConfiguration>(provider => configuration);
         services.AddSingleton<ICrosshairCommandsHandler, CrosshairCommandsHandler>();
     })
-    .ConfigureAppConfiguration((hostingContext, config) =>
-    {
-        IHostEnvironment env = hostingContext.HostingEnvironment;
-        var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-        config.AddUserSecrets(appAssembly, optional: true);
-    })
     .UseSerilog()
     .Build();
 
-
-
-
-
-
-
+await CrosshairBotInitializer.Initialize(
+    host.Services.GetService<DiscordSocketClient>(),
+    host.Services.GetService<ILogger<CrosshairBotInitializer>>());
 
 await host.RunAsync();

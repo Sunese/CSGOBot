@@ -4,7 +4,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseIntermediateOutputPath>C:\Users\Sune\git\CrosshairBot\CrosshairBot.Core\obj</BaseIntermediateOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Client\**" />
+    <EmbeddedResource Remove="Client\**" />
+    <None Remove="Client\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.9.0" />
