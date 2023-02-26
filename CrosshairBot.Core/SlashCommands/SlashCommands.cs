@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Discord;
 using CrosshairBot.Core.SlashCommands;
+using System.Collections.Generic;
 
 namespace CrosshairBot.Domain.SlashCommands;
 
@@ -16,9 +17,7 @@ public class SlashCommands : ISlashCommands
 
     private List<IApplicationCommand> commands = new()
     {
-        // All defined commands should be put here
-        new HelloCommand().Get()
-        // TODO: add more
+        new HelloCommand()
     };
 
     //public enum SlashCommandsEnum
@@ -75,8 +74,13 @@ public class SlashCommands : ISlashCommands
     //    }
     //}
 
-    public async Task<List<IApplicationCommand>> Get()
+    public List<IApplicationCommand> Get()
     {
         return commands;
+    }
+
+    public void Add(IApplicationCommand command)
+    {
+        commands.Add(command);
     }
 }

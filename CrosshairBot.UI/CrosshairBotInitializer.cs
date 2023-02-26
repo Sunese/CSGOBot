@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using CrosshairBot.Core.SlashCommands;
 using CrosshairBot.Domain.SlashCommands;
 using CrosshairBot.Domain.SlashCommands.Handlers;
@@ -39,9 +41,12 @@ namespace CrosshairBot.Application.Services
             client.Ready += async () =>
             {
                 // TODO: register commands
-                foreach (var command in await slashCommands.Get())
+                foreach (var command in slashCommands.Get())
                 {
-                    
+                    foreach (var guild in client.Guilds)
+                    {
+                        await guild.CreateApplicationCommandAsync(command);
+                    }
                 }
             };
         }

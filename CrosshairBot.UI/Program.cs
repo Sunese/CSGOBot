@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog.Events;
+using System;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -32,7 +33,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddSingleton<DiscordSocketClient>(); // <-- can be manually instantiated to pass configs
-        //services.AddSingleton<ISlashCommands, SlashCommands>();
+        services.AddSingleton<ISlashCommands, SlashCommands>();
         //services.AddTransient<IExampleTransientService, ExampleTransientService>();
         //services.AddScoped<IExampleScopedService, ExampleScopedService>();
         //services.AddSingleton<IExampleSingletonService, ExampleSingletonService>();
@@ -45,6 +46,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
 
 await CrosshairBotInitializer.Initialize(
     host.Services.GetService<DiscordSocketClient>(),
-    host.Services.GetService<ILogger<CrosshairBotInitializer>>());
+    host.Services.GetService<ILogger<CrosshairBotInitializer>>(),
+    host.Services.GetService<ISlashCommands>());
 
 await host.RunAsync();
