@@ -8,28 +8,27 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Discord;
-
+using CrosshairBot.Domain.SlashCommands;
 
 namespace CrosshairBot.Core.SlashCommands;
 
-public class HelloCommand
+public class HelloCommand : ISlashCommand
 {
-    private readonly SlashCommandBuilder _commandBuilder;
 
-    public HelloCommand()
+    /// <summary>
+    /// Gets the non-built Hello SlashCommandBuilder
+    /// </summary>
+    /// <returns></returns>
+    public SlashCommandProperties Get()
     {
         var helloCommand = new SlashCommandBuilder();
+        // IMPORTANT: Slash command names must be all lowercase!
         helloCommand.WithName("hello");
         helloCommand.WithDescription("This is my first slash command!");
-        _commandBuilder = helloCommand;
+        return helloCommand.Build();
     }
 
-    public SlashCommandProperties Build()
-    {
-        return _commandBuilder.Build();
-    }
-
-    public static async Task Respond(SocketSlashCommand command)
+    public async Task Respond(SocketSlashCommand command)
     {
         var embedBuilder = new EmbedBuilder()
             .WithAuthor(command.User)
@@ -38,7 +37,7 @@ public class HelloCommand
             .WithColor(Color.Green)
             .WithCurrentTimestamp();
 
-        await command.RespondAsync(embed: embedBuilder.Build());
+        await command.ModifyOriginalResponseAsync(x => x.Embed = embedBuilder.Build());
     }
 
     

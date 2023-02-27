@@ -1,4 +1,7 @@
+using System;
+using System.Threading.Tasks;
 using CrosshairBot.Core.SlashCommands;
+using CrosshairBot.Application;
 using CrosshairBot.Domain.SlashCommands;
 using Discord;
 using Discord.WebSocket;
@@ -6,10 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CrosshairBot.UI
 {
-    public class CrosshairBotInitializer
+    public static class CrosshairBotInitializer
     {
         // static async method that behaves like a constructor       
-        public static async Task Initialize(DiscordSocketClient client, ILogger<CrosshairBotInitializer> logger, ISlashCommands slashCommands)
+        public static async Task Initialize(
+            DiscordSocketClient client,
+            ILogger<CrosshairBotInitializer> logger,
+            ILogger<SlashCommandHandler> slashCommandHandlerLogger)
         {
             logger.LogDebug("Initializing bot...");
 
@@ -28,23 +34,24 @@ namespace CrosshairBot.UI
             client.Ready += async () =>
             {
                 logger.LogInformation("Bot is ready, registering slash commands.");
-                foreach (var command in slashCommands.Get())
+
+                var helloCommand = new HelloCommand().Get();
+
+                // initialize + build more commands here
+                // IMPORTANT: Slash command names must be all lowercase!
+                foreach (var guild in client.Guilds)
                 {
-                    foreach (var guild in client.Guilds)
-                    {
-                        await guild.CreateApplicationCommandAsync(command);
-                    }
+                    // TODO: this is for debugging, remove
+                    await guild.DeleteApplicationCommandsAsync();
+                    await guild.CreateApplicationCommandAsync(helloCommand);
+                    //await guild.create...
                 }
-                logger.LogInformation("Done registering slash commands.");
+                logger.LogInformation("Done registering slash commands. Waiting for clients...");
             };
 
-            client.SlashCommandExecuted += command =>
-            {
-                // AutoMapper here... e.g. might resolve to a HelloCommand
+            var slashCommandHandler = new SlashCommandHandler(slashCommandHandlerLogger);
 
-                // E.g. we should get an already instantiated HelloCommand from
-                var resolvedCommand = ;
-            };
+            client.SlashCommandExecuted += slashCommandHandler.Handle;
         }
 
 

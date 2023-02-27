@@ -1,5 +1,4 @@
-﻿using CrosshairBot.Domain.SlashCommands.Handlers;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
 using Discord;
 using CrosshairBot.Core.SlashCommands;
@@ -9,25 +8,19 @@ namespace CrosshairBot.Domain.SlashCommands;
 
 
 
-public class SlashCommands : ISlashCommands
+public class SlashCommand : ISlashCommand
 {
-    private ILogger<SlashCommands> _logger;
+    private ILogger<SlashCommand> _logger;
     private DiscordSocketClient _client;
-    private HelloCommand _helloCommand;
 
     private List<ApplicationCommandProperties> _commands = new()
     {
     };
 
-    public SlashCommands(ILogger<SlashCommands> logger, DiscordSocketClient client, HelloCommand helloCommand )
+    public SlashCommand(ILogger<SlashCommand> logger, DiscordSocketClient client)
     {
         _logger = logger;
         _client = client;
-        _helloCommand = helloCommand;
-
-        // All slash commands are added here
-        _commands.Add(_helloCommand.Build());
-        // TODO: add more commands here
     }
 
     //public enum SlashCommandsEnum
@@ -88,6 +81,8 @@ public class SlashCommands : ISlashCommands
     {
         return _commands;
     }
+
+    
 
     public void Add(ApplicationCommandProperties command)
     {
