@@ -1,19 +1,14 @@
-﻿using System.Collections;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
-using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
+using Newtonsoft.Json;
 
-namespace CrosshairBot.Domain.SlashCommands.Handlers;
+namespace CrosshairBot.NotificationHandlers;
 
-public class CrosshairCommandsHandler : ICrosshairCommandsHandler
+public class CrosshairCommandsHandler
 {
-    private ILogger<ICrosshairCommandsHandler> logger;
+    private ILogger<CrosshairCommandsHandler> logger;
     private HttpClient client = new HttpClient();
 
     public CrosshairCommandsHandler(ILogger<CrosshairCommandsHandler> logger)
