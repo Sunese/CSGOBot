@@ -19,6 +19,8 @@ namespace CrosshairBot.RequestHandlers
             {
                 case SlashCommandsEnum.hello:
                     return await new HelloCommand().MessageAction(command.SocketSlashCommand);
+                case SlashCommandsEnum.crosshairoftheweek:
+                    return await new CrosshairOfTheWeekCommand().MessageAction(command.SocketSlashCommand);
                 default:
                     throw new ArgumentException("Unrecognized slash command");
             }

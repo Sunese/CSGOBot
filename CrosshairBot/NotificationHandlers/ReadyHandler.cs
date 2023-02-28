@@ -25,6 +25,7 @@ public class ReadyHandler : INotificationHandler<ReadyNotification>
         _logger.LogInformation("Bot is ready, registering slash commands.");
 
         var helloCommand = new HelloCommand().SlashCommandProperties;
+        var crosshairOfTheWeekCommand = new CrosshairOfTheWeekCommand().SlashCommandProperties;
 
         // initialize + build more commands here
         // IMPORTANT: Slash command names must be all lowercase!
@@ -33,6 +34,7 @@ public class ReadyHandler : INotificationHandler<ReadyNotification>
             // TODO: this is for debugging, remove
             await guild.DeleteApplicationCommandsAsync();
             await guild.CreateApplicationCommandAsync(helloCommand);
+            await guild.CreateApplicationCommandAsync(crosshairOfTheWeekCommand);
             //await guild.create...
         }
         _logger.LogInformation("Done registering slash commands. Waiting for clients...");

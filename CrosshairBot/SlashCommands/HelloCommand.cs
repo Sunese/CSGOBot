@@ -30,6 +30,4 @@ public class HelloCommand
             new Action<MessageProperties>(
                 x => x.Embed = embedBuilder.Build()));
     }
-
-
 }
