@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.DbContexts;
 
@@ -10,9 +11,11 @@ using Repository.DbContexts;
 namespace Repository.Migrations
 {
     [DbContext(typeof(CsgoBotDataContext))]
-    partial class CsgoBotDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230304164203_FKeySteamID64")]
+    partial class FKeySteamID64
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,7 +89,7 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("gamesId")
+                    b.Property<Guid>("gamesid")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("membership_type")
@@ -115,21 +118,21 @@ namespace Repository.Migrations
 
                     b.HasKey("player_id");
 
-                    b.HasIndex("gamesId");
+                    b.HasIndex("gamesid");
 
                     b.ToTable("FaceitPlayers");
                 });
 
             modelBuilder.Entity("CSGOBot.Data.Models.Games", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("csgoId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.HasIndex("csgoId");
 
@@ -161,7 +164,7 @@ namespace Repository.Migrations
                 {
                     b.HasOne("CSGOBot.Data.Models.Games", "games")
                         .WithMany()
-                        .HasForeignKey("gamesId")
+                        .HasForeignKey("gamesid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

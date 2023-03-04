@@ -73,8 +73,11 @@ public class Program
             .Build();
         var secret = config["DiscordBotToken"];
         var connectionString = config["CsgoBotDataConnectionString"];
+        var faceitApiKey = config["FaceitApiKey"];
         Environment.SetEnvironmentVariable("DiscordBotToken", secret);
         Environment.SetEnvironmentVariable("CsgoBotDataConnectionString", connectionString);
+        Environment.SetEnvironmentVariable("FaceitApiKey", faceitApiKey);
+
 
         // Bot token can be provided from the Configuration object we set up earlier
         await client.LoginAsync(TokenType.Bot, secret);

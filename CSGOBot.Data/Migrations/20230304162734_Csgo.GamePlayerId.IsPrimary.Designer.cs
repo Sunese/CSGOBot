@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.DbContexts;
 
@@ -10,9 +11,11 @@ using Repository.DbContexts;
 namespace Repository.Migrations
 {
     [DbContext(typeof(CsgoBotDataContext))]
-    partial class CsgoBotDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230304162734_Csgo.GamePlayerId.IsPrimary")]
+    partial class CsgoGamePlayerIdIsPrimary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,16 +24,11 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("CSGOBot.Data.Models.Csgo", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                    b.Property<string>("game_player_id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("faceit_elo")
                         .HasColumnType("int");
-
-                    b.Property<string>("game_player_id")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("game_player_name")
                         .IsRequired()
@@ -51,7 +49,7 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("game_player_id");
 
                     b.ToTable("Csgo");
                 });
@@ -86,7 +84,7 @@ namespace Repository.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("gamesId")
+                    b.Property<Guid>("gamesid")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("membership_type")
@@ -115,23 +113,24 @@ namespace Repository.Migrations
 
                     b.HasKey("player_id");
 
-                    b.HasIndex("gamesId");
+                    b.HasIndex("gamesid");
 
                     b.ToTable("FaceitPlayers");
                 });
 
             modelBuilder.Entity("CSGOBot.Data.Models.Games", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("csgoId")
-                        .HasColumnType("char(36)");
+                    b.Property<string>("csgogame_player_id")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.HasIndex("csgoId");
+                    b.HasIndex("csgogame_player_id");
 
                     b.ToTable("Games");
                 });
@@ -161,7 +160,7 @@ namespace Repository.Migrations
                 {
                     b.HasOne("CSGOBot.Data.Models.Games", "games")
                         .WithMany()
-                        .HasForeignKey("gamesId")
+                        .HasForeignKey("gamesid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -172,7 +171,7 @@ namespace Repository.Migrations
                 {
                     b.HasOne("CSGOBot.Data.Models.Csgo", "csgo")
                         .WithMany()
-                        .HasForeignKey("csgoId")
+                        .HasForeignKey("csgogame_player_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

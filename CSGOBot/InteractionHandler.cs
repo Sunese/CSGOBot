@@ -173,6 +173,15 @@ public class InteractionHandler
             await rawModal.RespondAsync("Did not recognize form. None of your data has been saved :handshake:");
         }
 
-        await _faceit.RegisterUser(rawModal);
+        try
+        {
+            await rawModal.DeferAsync();
+            await rawModal.FollowupAsync("Locating Faceit user and linking to your Discord profile... :mag:");
+            await _faceit.RegisterUser(rawModal);
+        }
+        catch (FaceitService.FaceitServiceException e)
+        {
+            await rawModal.RespondAsync(e.Message + " :warning:");
+        }
     }
 }
