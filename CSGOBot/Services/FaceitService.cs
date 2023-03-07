@@ -1,16 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CSGOBot.Data.Models;
-using CSGOBot.Enums;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Repository.DbContexts;
@@ -42,8 +37,9 @@ public class FaceitService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new FaceitServiceException(
-                $"No player with nickname '{modalFaceitUsername}' was found. Please note that this service is CASE-SENSITIVE and double-check the given username.");
+            //throw new FaceitServiceException(
+            //    $"No player with nickname '{modalFaceitUsername}' was found. Please note that this service is CASE-SENSITIVE and double-check the given username.");
+            throw new FaceitServiceException("An error with FaceitAPI occurred.");
         }
 
         var faceitPlayer = JsonConvert.DeserializeObject<FaceitPlayer>(await response.Content.ReadAsStringAsync());
@@ -77,10 +73,11 @@ public class FaceitService
         }
 
         // Also store FaceitPlayer data (if it doesn't exist)
-        if (!await context.FaceitPlayers.ContainsAsync(faceitPlayer))
-        {
-            context.FaceitPlayers.Add(faceitPlayer);
-        }
+        // --> actually no reason to store it...
+        //if (!await context.FaceitPlayers.ContainsAsync(faceitPlayer))
+        //{
+        //    context.FaceitPlayers.Add(faceitPlayer);
+        //}
         await context.SaveChangesAsync();
         var embed = new EmbedBuilder()
             .WithTitle("Success!")
@@ -88,6 +85,21 @@ public class FaceitService
             .WithAuthor(modal.User)
             .Build();
         await modal.FollowupAsync(embed: embed);
+    }
+
+    public async Task<FaceitPlayer> GetPlayerInfo(Guid faceitPlayerId)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("FaceitApiKey"));
+        var response = await _httpClient.GetAsync($"https://open.faceit.com/data/v4/players/{faceitPlayerId}");
+
+        var faceitPlayer = JsonConvert.DeserializeObject<FaceitPlayer>(await response.Content.ReadAsStringAsync());
+
+        if (faceitPlayer is null)
+        {
+            throw new FaceitServiceException($"Deserializing Faceit Player response from FaceIt API resulted in null");
+        }
+
+        return faceitPlayer;
     }
 
     

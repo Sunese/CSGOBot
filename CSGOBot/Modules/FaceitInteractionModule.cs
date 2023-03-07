@@ -16,17 +16,18 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
     public InteractionService Commands { get; set; }
 
     private readonly InteractionHandler _handler;
+    private readonly FaceitService _faceit;
     //private readonly HltvApiService _hltvApiService;
     //private readonly ProSettingsScraperService _proSettingsScraperService;
         
 
     // Constructor injection is also a valid way to access the dependencies
     public FaceitInteractionModule(
-        InteractionHandler handler, 
-        HltvApiService hltvApiService, 
-        ProSettingsScraperService proSettingsScraperService)
+        InteractionHandler handler,
+        FaceitService faceit)
     {
         _handler = handler;
+        _faceit = faceit;
         //_hltvApiService = hltvApiService;
         //_proSettingsScraperService = proSettingsScraperService;
     }
@@ -48,4 +49,14 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
                 placeholder: "Faceit username (case sensitive)");
         await RespondWithModalAsync(modal.Build());
     }
+
+    [SlashCommand("faceitinfo", "Get Faceit info")]
+    public async Task FaceitPlayerInfo()
+        // todo: add choice for every user in guild that has registered (and 'myself')
+        // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
+        // maybe allow command user to mention a user that they want commands for
+    {
+        //_faceit.GetPlayerInfo(guid);
+    }
+
 }

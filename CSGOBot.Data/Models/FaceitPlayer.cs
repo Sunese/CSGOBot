@@ -17,7 +17,7 @@ public class FaceitPlayer
     public string country { get; set; }
     public string cover_image { get; set; }
     public Games games { get; set; }
-    public string[] friends_ids { get; set; }
+    //public string[] friends_ids { get; set; }
     public string new_steam_id { get; set; }
     public string steam_id_64 { get; set; }
     public string steam_nickname { get; set; }

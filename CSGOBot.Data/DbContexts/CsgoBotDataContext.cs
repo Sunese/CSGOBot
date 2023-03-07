@@ -9,7 +9,7 @@ namespace Repository.DbContexts;
 public class CsgoBotDataContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<FaceitPlayer> FaceitPlayers { get; set; }
+    //public DbSet<FaceitPlayer> FaceitPlayers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -27,29 +27,29 @@ public class CsgoBotDataContext : DbContext
         optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        builder.Entity<FaceitPlayer>()
-            .Property(e => e.friends_ids)
-            .HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
-        builder.Entity<FaceitPlayer>()
-            .Property(e => e.memberships)
-            .HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
-        builder.Entity<Csgo>(b =>
-        {
-            b.HasKey(e => e.Id);
-            b.Property(e => e.Id).ValueGeneratedOnAdd();
-        });
+    //protected override void OnModelCreating(ModelBuilder builder)
+    //{
+    //    //builder.Entity<FaceitPlayer>()
+    //    //    .Property(e => e.friends_ids)
+    //    //    .HasConversion(
+    //    //        v => string.Join(',', v),
+    //    //        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+    //    builder.Entity<FaceitPlayer>()
+    //        .Property(e => e.memberships)
+    //        .HasConversion(
+    //            v => string.Join(',', v),
+    //            v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+    //    builder.Entity<Csgo>(b =>
+    //    {
+    //        b.HasKey(e => e.Id);
+    //        b.Property(e => e.Id).ValueGeneratedOnAdd();
+    //    });
 
-        builder.Entity<Games>(b =>
-        {
-            b.HasKey(e => e.Id);
-            b.Property(e => e.Id).ValueGeneratedOnAdd();
-        });
+    //    builder.Entity<Games>(b =>
+    //    {
+    //        b.HasKey(e => e.Id);
+    //        b.Property(e => e.Id).ValueGeneratedOnAdd();
+    //    });
 
-    }
+    //}
 }
