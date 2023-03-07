@@ -44,6 +44,7 @@ public class Program
             .AddSingleton<CommandService>()
             .AddScoped<HltvApiService>()
             .AddScoped<ProSettingsScraperService>()
+            .AddScoped<SteamService>()
             .AddScoped<FaceitService>()
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
@@ -74,6 +75,7 @@ public class Program
         var secret = config["DiscordBotToken"];
         var connectionString = config["CsgoBotDataConnectionString"];
         var faceitApiKey = config["FaceitApiKey"];
+        var steamApiKey = config["SteamApiKey"];
         Environment.SetEnvironmentVariable("DiscordBotToken", secret);
         Environment.SetEnvironmentVariable("CsgoBotDataConnectionString", connectionString);
         Environment.SetEnvironmentVariable("FaceitApiKey", faceitApiKey);

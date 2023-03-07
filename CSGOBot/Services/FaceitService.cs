@@ -87,7 +87,7 @@ public class FaceitService
         await modal.FollowupAsync(embed: embed);
     }
 
-    public async Task<FaceitPlayer> GetPlayerInfo(Guid faceitPlayerId)
+    public async Task<FaceitPlayer> GetPlayerInfo(Guid? faceitPlayerId)
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Environment.GetEnvironmentVariable("FaceitApiKey"));
         var response = await _httpClient.GetAsync($"https://open.faceit.com/data/v4/players/{faceitPlayerId}");

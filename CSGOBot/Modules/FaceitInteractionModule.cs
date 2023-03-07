@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
+using CSGOBot.Data.Models;
 using CSGOBot.Enums;
 using CSGOBot.Services;
 using Discord;
 using Discord.Interactions;
 using InteractionFramework;
+using Repository.DbContexts;
 
 namespace CSGOBot.Modules;
 
@@ -37,7 +40,7 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
     // Optional method parameters(parameters with a default value) also will be displayed as optional on Discord.
 
     // [Summary] lets you customize the name and the description of a parameter
-    [SlashCommand("registerfaceit", "Connect your Faceit account to your Discord profile!")]
+    [SlashCommand("registerfaceit", "Connect your Faceit (and Steam) account to your Discord profile!")]
     public async Task RegisterFaceit()
     {
         var modal = new ModalBuilder()
@@ -46,17 +49,60 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
             .AddTextInput(
                 label: "What is your faceit username?",
                 customId: "faceit_username",
-                placeholder: "Faceit username (case sensitive)");
+                placeholder: "username (CASE SENSITIVE)");
         await RespondWithModalAsync(modal.Build());
     }
 
-    [SlashCommand("faceitinfo", "Get Faceit info")]
-    public async Task FaceitPlayerInfo()
-        // todo: add choice for every user in guild that has registered (and 'myself')
-        // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
-        // maybe allow command user to mention a user that they want commands for
-    {
-        //_faceit.GetPlayerInfo(guid);
-    }
+    //[SlashCommand("faceitinfo", "Get Faceit info")]
+    //public async Task FaceitPlayerInfo(string discordUser)
+    //    // todo: add choice for every user in guild that has registered (and 'myself')
+    //    // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
+    //    // maybe allow command user to mention a user that they want commands for
+    //{
 
+    //    //_faceit.GetPlayerInfo();
+    //} 
+
+    [UserCommand("faceitinfo")]
+    public async Task FaceitPlayerInfo(IUser user)
+    // todo: add choice for every user in guild that has registered (and 'myself')
+    // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
+    // maybe allow command user to mention a user that they want commands for
+    {
+        await DeferAsync();
+        await using var context = new CsgoBotDataContext();
+
+        var dbUser = await context.FindAsync<User>(user.Id);
+
+        if (dbUser == null)
+        {
+            // user does not exist
+            await FollowupAsync("User does not exist in database. They should execute the /register*** command to register.");
+            return;
+        }
+
+        if (dbUser is { FaceitPlayerId: null })
+        {
+            // user exists but faceit is not registered
+            await FollowupAsync("User's Faceit info does not exist in database. They should execute the /registerfaceit command to register.", ephemeral: true);
+            return;
+        }
+
+        if (dbUser.FaceitPlayerId != null)
+        {
+            var faceitPlayer  = await _faceit.GetPlayerInfo(dbUser.FaceitPlayerId);
+
+            var embed = new EmbedBuilder()
+                .WithTitle($"{faceitPlayer.nickname}")
+                //.WithAuthor(user.Username)
+                .WithThumbnailUrl(faceitPlayer.avatar)
+                .WithDescription($"{user.Username}'s Faceit profile\nFaceit level: {faceitPlayer.games.csgo.skill_level}\n Faceit elo: {faceitPlayer.games.csgo.faceit_elo}")
+                .WithColor(Color.Orange)
+                .WithUrl($"https://www.faceit.com/en/players/{faceitPlayer.nickname}")
+                .Build();
+
+            await FollowupAsync(embed: embed);
+            return;
+        }
+    }
 }

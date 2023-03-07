@@ -4,7 +4,10 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using CSGOBot;
 using CSGOBot.Services;
@@ -25,6 +28,7 @@ public class InteractionHandler
     private readonly CommandService _commands;
     private readonly ILogger<InteractionHandler> _logger;
     private readonly FaceitService _faceit;
+    private readonly SteamService _steam;
 
     public InteractionHandler(
         DiscordSocketClient client, 
@@ -33,7 +37,8 @@ public class InteractionHandler
         IConfiguration config, 
         CommandService commands, 
         ILogger<InteractionHandler> logger,
-        FaceitService faceit)
+        FaceitService faceit,
+        SteamService steam)
     {
         _client = client;
         _handler = handler;
@@ -42,6 +47,7 @@ public class InteractionHandler
         _commands = commands;
         _logger = logger;
         _faceit = faceit;
+        _steam = steam;
     }
 
     public async Task InitializeAsync()
@@ -167,21 +173,77 @@ public class InteractionHandler
 
     public async Task HandleModalSubmitted(SocketModal rawModal)
     {
-        if (rawModal.Data.CustomId != "register_faceit")
+
+        if (rawModal.Data.CustomId != "register_faceit" && rawModal.Data.CustomId != "register_steam")
         {
             // do nothing ... 
             await rawModal.RespondAsync("Did not recognize form. None of your data has been saved :handshake:");
+            return;
         }
 
         try
         {
-            await rawModal.DeferAsync();
-            await rawModal.FollowupAsync("Locating Faceit user and linking to your Discord profile... :mag:");
-            await _faceit.RegisterUser(rawModal);
+
+            if (rawModal.Data.CustomId != "register_faceit")
+            {
+                await rawModal.DeferAsync();
+                await rawModal.FollowupAsync("Locating Faceit user and linking to your Discord profile... :mag:");
+                await _faceit.RegisterUser(rawModal);
+                return;
+            }
+
+            if (rawModal.Data.CustomId == "register_steam")
+            {
+                await rawModal.DeferAsync();
+                await rawModal.FollowupAsync("Validating SteamID64 and linking to your Discord profile... :mag:");
+
+                var modal_steamId64 = rawModal.Data.Components.First().Value;
+
+                UInt64 parsed;
+                var embed = new EmbedBuilder();
+
+                if (modal_steamId64.Length > 20 || modal_steamId64.Length < 15 ||
+                    !UInt64.TryParse(modal_steamId64, out parsed))
+                {
+                    var built = embed
+                        .WithTitle("SteamId.IO")
+                        .WithUrl("https://steamid.io/")
+                        .WithDescription(
+                            "It does not look like you provided me with a SteamID64 value. Please look it up here: https://steamid.io/")
+                        .Build();
+                    await rawModal.FollowupAsync(embed: built);
+                    return;
+                }
+
+                var steamPlayer = await _steam.RegisterUserAsync(rawModal.User, modal_steamId64);
+
+                if (steamPlayer != null)
+                {
+                    var built = embed
+                        .WithTitle("Success!")
+                        .WithDescription($"Steam ID: {modal_steamId64} has been linked to your discord account!")
+                        .WithThumbnailUrl(steamPlayer.avatarfull)
+                        //.WithAuthor(modal.User)
+                        .Build();
+                    await rawModal.FollowupAsync(embed: built);
+                    return;
+                }
+            }
         }
+
         catch (FaceitService.FaceitServiceException e)
         {
             await rawModal.RespondAsync(e.Message + " :warning:");
+        }
+
+        catch (SteamService.SteamServiceException e)
+        {
+            await rawModal.RespondAsync(e.Message + " :warning:");
+        }
+
+        catch (Exception e)
+        {
+            await rawModal.RespondAsync("Unhandled exception :(");
         }
     }
 }
