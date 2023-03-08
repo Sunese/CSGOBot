@@ -75,12 +75,30 @@ public class SteamService
         }
     }
 
-    //public async Task<FaceitPlayer> GetPlayerInfo(Guid? faceitPlayerId)
-    //{
+    public async Task<Player> GetAccountInfo(string steamid64)
+    {
+        var steamApiKey = Environment.GetEnvironmentVariable("SteamApiKey");
 
-    //}
+        var response = await _httpClient.GetAsync($"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamApiKey}&steamids={steamid64}");
 
-    
+        if (!response.IsSuccessStatusCode)
+        {
+            //throw new FaceitServiceException(
+            //    $"No player with nickname '{modalFaceitUsername}' was found. Please note that this service is CASE-SENSITIVE and double-check the given username.");
+            throw new SteamServiceException("An error with SteamAPI occurred.");
+        }
+
+        var playerSummaries = JsonConvert.DeserializeObject<SteamApiResponse>(await response.Content.ReadAsStringAsync());
+
+        if (playerSummaries is null || playerSummaries.response is null || playerSummaries.response.players is null)
+        {
+            throw new SteamServiceException($"Deserializing response from Steam API resulted in null");
+        }
+
+        return playerSummaries.response.players.First();
+    }
+
+
     public class SteamServiceException : Exception
     {
         public SteamServiceException()

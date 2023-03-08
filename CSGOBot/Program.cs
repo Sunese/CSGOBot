@@ -79,6 +79,7 @@ public class Program
         Environment.SetEnvironmentVariable("DiscordBotToken", secret);
         Environment.SetEnvironmentVariable("CsgoBotDataConnectionString", connectionString);
         Environment.SetEnvironmentVariable("FaceitApiKey", faceitApiKey);
+        Environment.SetEnvironmentVariable("SteamApiKey", steamApiKey);
 
 
         // Bot token can be provided from the Configuration object we set up earlier
