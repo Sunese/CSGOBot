@@ -35,34 +35,6 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
         //_proSettingsScraperService = proSettingsScraperService;
     }
 
-    // You can use a number of parameter types in you Slash Command handlers (string, int, double, bool, IUser, IChannel, IMentionable, IRole, Enums) by default. Optionally,
-    // you can implement your own TypeConverters to support a wider range of parameter types. For more information, refer to the library documentation.
-    // Optional method parameters(parameters with a default value) also will be displayed as optional on Discord.
-
-    // [Summary] lets you customize the name and the description of a parameter
-    [SlashCommand("registerfaceit", "Connect your Faceit (and Steam) account to your Discord profile!")]
-    public async Task RegisterFaceit()
-    {
-        var modal = new ModalBuilder()
-            .WithTitle("Registering Faceit to your account")
-            .WithCustomId("register_faceit")
-            .AddTextInput(
-                label: "What is your faceit username?",
-                customId: "faceit_username",
-                placeholder: "username (CASE SENSITIVE)");
-        await RespondWithModalAsync(modal.Build());
-    }
-
-    //[SlashCommand("faceitinfo", "Get Faceit info")]
-    //public async Task FaceitPlayerInfo(string discordUser)
-    //    // todo: add choice for every user in guild that has registered (and 'myself')
-    //    // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
-    //    // maybe allow command user to mention a user that they want commands for
-    //{
-
-    //    //_faceit.GetPlayerInfo();
-    //} 
-
     [UserCommand("faceitinfo")]
     public async Task FaceitPlayerInfo(IUser user)
     // todo: add choice for every user in guild that has registered (and 'myself')
@@ -77,14 +49,14 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
         if (dbUser == null)
         {
             // user does not exist
-            await FollowupAsync("User does not exist in database. They should execute the /register*** command to register.");
+            await FollowupAsync($"Discord user {user.Username} does not exist in database. They should execute the /register faceit command to register.");
             return;
         }
 
         if (dbUser is { FaceitPlayerId: null })
         {
             // user exists but faceit is not registered
-            await FollowupAsync("User's Faceit info does not exist in database. They should execute the /registerfaceit command to register.", ephemeral: true);
+            await FollowupAsync($"Discord user {user.Username}'s Faceit info does not exist in database. They should execute the /register faceit command to register.");
             return;
         }
 

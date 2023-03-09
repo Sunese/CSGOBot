@@ -69,9 +69,6 @@ public class InteractionHandler
         _client.MessageReceived += HandleMessageReceived;
         _commands.CommandExecuted += HandleCommandExecuted;
 
-        // Process modal (only used for faceit registering for now)
-        _client.ModalSubmitted += HandleModalSubmitted;
-
     }
 
     private Task LogAsync(LogMessage message)
@@ -169,82 +166,5 @@ public class InteractionHandler
 
         // the command failed, let's notify the user that something happened.
         await context.Channel.SendMessageAsync($"error: {result}");
-    }
-
-    public async Task HandleModalSubmitted(SocketModal rawModal)
-    {
-
-        await rawModal.DeferAsync();
-
-        if (rawModal.Data.CustomId != "register_faceit" && rawModal.Data.CustomId != "register_steam")
-        {
-            // do nothing ... 
-            await rawModal.FollowupAsync("Did not recognize form. None of your data has been saved :handshake:");
-            return;
-        }
-
-        try
-        {
-
-            if (rawModal.Data.CustomId == "register_faceit")
-            {
-                await rawModal.FollowupAsync("Locating Faceit user and linking to your Discord profile... :mag:");
-                await _faceit.RegisterUser(rawModal);
-                return;
-            }
-
-            if (rawModal.Data.CustomId == "register_steam")
-            {
-                await rawModal.FollowupAsync("Validating SteamID64 and linking to your Discord profile... :mag:");
-
-                var modal_steamId64 = rawModal.Data.Components.First().Value;
-
-                UInt64 parsed;
-                var embed = new EmbedBuilder();
-
-                if (modal_steamId64.Length > 20 || modal_steamId64.Length < 15 ||
-                    !UInt64.TryParse(modal_steamId64, out parsed))
-                {
-                    var built = embed
-                        .WithTitle("steamid.io")
-                        .WithUrl("https://steamid.io/")
-                        .WithDescription(
-                            "It does not look like you provided me with a SteamID64 value :warning: You can look up your SteamID64 here: https://steamid.io/")
-                        .Build();
-                    await rawModal.FollowupAsync(embed: built);
-                    return;
-                }
-
-                var steamPlayer = await _steam.RegisterUserAsync(rawModal.User, modal_steamId64);
-
-                if (steamPlayer != null)
-                {
-                    var built = embed
-                        .WithTitle("Success!")
-                        .WithDescription($"Steam ID: {modal_steamId64} has been linked to your discord account!")
-                        .WithThumbnailUrl(steamPlayer.avatarfull)
-                        .WithUrl(steamPlayer.profileurl)
-                        //.WithAuthor(modal.User)
-                        .Build();
-                    await rawModal.FollowupAsync(embed: built);
-                    return;
-                }
-            }
-        }
-
-        catch (FaceitService.FaceitServiceException e)
-        {
-            await rawModal.FollowupAsync(e.Message + " :warning:");
-        }
-
-        catch (SteamService.SteamServiceException e)
-        {
-            await rawModal.FollowupAsync(e.Message + " :warning:");
-        }
-
-        catch (Exception e)
-        {
-            await rawModal.FollowupAsync("Unhandled exception :(");
-        }
     }
 }
