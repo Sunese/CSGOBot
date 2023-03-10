@@ -49,23 +49,30 @@ public class SteamInteractionModule : InteractionModuleBase<SocketInteractionCon
 
         var dbUser = await context.FindAsync<User>(user.Id);
 
+        // user does not exist at all
         if (dbUser == null)
         {
-            // user does not exist
-            await FollowupAsync(
-                $"Discord user {user.Username} does not exist in database. They should execute the /register steam command to register.");
-            return;
+            var embed = new EmbedBuilder()
+                .WithTitle($"{user.Username} is not registered")
+                .WithDescription($"Discord user {user.Username} does not exist in database. They should execute the /register steam command to register.")
+                .WithColor(Color.Red)
+                .Build();
+            await FollowupAsync(embed: embed);
         }
 
-        if (dbUser is { SteamID64: null })
+        // user exists but no steam info
+        else if (dbUser is { SteamID64: null })
         {
-            // user exists but faceit is not registered
-            await FollowupAsync(
-                $"Discord user {user.Username}'s Steam info does not exist in database. They should execute the /register steam command to register.");
-            return;
+            var embed = new EmbedBuilder()
+                .WithTitle($"{user.Username}'s Steam info is not registered")
+                .WithDescription($"Discord user {user.Username}'s Steam info does not exist in database. They should execute the /register steam command to register.")
+                .WithColor(Color.Red)
+                .Build();
+            await FollowupAsync(embed: embed);
         }
 
-        if (dbUser.SteamID64 != null)
+        // user and steam info exists
+        else if (dbUser.SteamID64 != null)
         {
             var steamAccount = await _steam.GetAccountInfo(dbUser.SteamID64);
 
@@ -79,7 +86,6 @@ public class SteamInteractionModule : InteractionModuleBase<SocketInteractionCon
                 .Build();
 
             await FollowupAsync(embed: embed);
-            return;
         }
     }
 }

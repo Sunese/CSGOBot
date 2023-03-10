@@ -43,24 +43,33 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
     {
         await DeferAsync();
         await using var context = new CsgoBotDataContext();
-
         var dbUser = await context.FindAsync<User>(user.Id);
 
+        // user does not exist
         if (dbUser == null)
         {
-            // user does not exist
-            await FollowupAsync($"Discord user {user.Username} does not exist in database. They should execute the /register faceit command to register.");
-            return;
+            var embed = new EmbedBuilder()
+                .WithTitle($"{user.Username} is not registered")
+                .WithDescription($"Discord user {user.Username} does not exist in database. They should execute the /register faceit command to register.")
+                .WithColor(Color.Red)
+                .Build();
+            await FollowupAsync(embed: embed);
         }
 
-        if (dbUser is { FaceitPlayerId: null })
+        // user exists but faceit is not registered
+        else if (dbUser is { FaceitPlayerId: null })
         {
-            // user exists but faceit is not registered
-            await FollowupAsync($"Discord user {user.Username}'s Faceit info does not exist in database. They should execute the /register faceit command to register.");
-            return;
-        }
 
-        if (dbUser.FaceitPlayerId != null)
+            var embed = new EmbedBuilder()
+                .WithTitle($"{user.Username}'s Faceit info is not registered")
+                .WithDescription($"Discord user {user.Username}'s Faceit info does not exist in database. They should execute the /register faceit command to register.")
+                .WithColor(Color.Red)
+                .Build();
+            await FollowupAsync(embed: embed);
+        } 
+
+        // user and faceit info exists
+        else  if (dbUser.FaceitPlayerId != null)
         {
             var faceitPlayer  = await _faceit.GetPlayerInfo(dbUser.FaceitPlayerId);
 
@@ -74,7 +83,6 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
                 .Build();
 
             await FollowupAsync(embed: embed);
-            return;
         }
     }
 }
