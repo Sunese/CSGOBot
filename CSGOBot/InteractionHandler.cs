@@ -27,8 +27,6 @@ public class InteractionHandler
     private readonly IConfiguration _configuration;
     private readonly CommandService _commands;
     private readonly ILogger<InteractionHandler> _logger;
-    private readonly FaceitService _faceit;
-    private readonly SteamService _steam;
 
     public InteractionHandler(
         DiscordSocketClient client, 
@@ -36,9 +34,7 @@ public class InteractionHandler
         IServiceProvider services, 
         IConfiguration config, 
         CommandService commands, 
-        ILogger<InteractionHandler> logger,
-        FaceitService faceit,
-        SteamService steam)
+        ILogger<InteractionHandler> logger)
     {
         _client = client;
         _handler = handler;
@@ -46,8 +42,6 @@ public class InteractionHandler
         _configuration = config;
         _commands = commands;
         _logger = logger;
-        _faceit = faceit;
-        _steam = steam;
     }
 
     public async Task InitializeAsync()

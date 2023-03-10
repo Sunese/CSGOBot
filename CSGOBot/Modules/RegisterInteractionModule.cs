@@ -1,39 +1,22 @@
-﻿using CSGOBot.Data.Models;
-using CSGOBot.Services;
+﻿using CSGOBot.Services;
 using Discord;
 using Discord.Interactions;
 using InteractionFramework;
-using Repository.DbContexts;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CSGOBot.Modules
 {
     public class RegisterInteractionModule : InteractionModuleBase<SocketInteractionContext>
     {
-        // Dependencies can be accessed through Property injection, public properties with public setters will be set by the service provider
-        public InteractionService Commands { get; set; }
-
-        private readonly InteractionHandler _handler;
         private readonly SteamService _steam;
         private readonly FaceitService _faceit;
-        //private readonly HltvApiService _hltvApiService;
-        //private readonly ProSettingsScraperService _proSettingsScraperService;
-
-
-        // Constructor injection is also a valid way to access the dependencies
+        
         public RegisterInteractionModule(
-            InteractionHandler handler,
             SteamService steam,
             FaceitService faceit)
         {
-            _handler = handler;
             _steam = steam;
             _faceit = faceit;
-            //_faceit = faceit;
-            //_hltvApiService = hltvApiService;
-            //_proSettingsScraperService = proSettingsScraperService;
         }
 
         [Group("register", "Register stuff to your Discord profile")]
@@ -47,8 +30,7 @@ namespace CSGOBot.Modules
             public async Task RegisterFaceit() =>
                 await Context.Interaction.RespondWithModalAsync<RegisterFaceitModal>("register_faceit");
         }
-
-        // Responds to the modal.
+        
         [ModalInteraction("register_steam")]
         public async Task SteamModalResponse(RegisterSteamModal modal)
         {
@@ -103,8 +85,7 @@ namespace CSGOBot.Modules
                 }
             }
         }
-
-        // Responds to the modal.
+        
         [ModalInteraction("register_faceit")]
         public async Task FaceitModalResponse(RegisterFaceitModal modal)
         {

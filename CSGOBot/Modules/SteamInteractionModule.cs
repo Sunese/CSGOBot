@@ -7,42 +7,24 @@ using Repository.DbContexts;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CSGOBot.Modules;
 
 public class SteamInteractionModule : InteractionModuleBase<SocketInteractionContext>
 {
-    // Dependencies can be accessed through Property injection, public properties with public setters will be set by the service provider
-    public InteractionService Commands { get; set; }
-
-    private readonly InteractionHandler _handler;
+    private readonly ILogger<SteamInteractionModule> _logger;
     private readonly SteamService _steam;
-
-    private readonly FaceitService _faceit;
-    //private readonly HltvApiService _hltvApiService;
-    //private readonly ProSettingsScraperService _proSettingsScraperService;
-
-
-    // Constructor injection is also a valid way to access the dependencies
-    public SteamInteractionModule(
-        InteractionHandler handler,
-        SteamService steam,
-        FaceitService faceit)
+    
+    public SteamInteractionModule(ILogger<SteamInteractionModule> logger, SteamService steam)
     {
-        _handler = handler;
+        _logger = logger;
         _steam = steam;
-        _faceit = faceit;
-        //_faceit = faceit;
-        //_hltvApiService = hltvApiService;
-        //_proSettingsScraperService = proSettingsScraperService;
     }
 
 
     [UserCommand("steaminfo")]
     public async Task SteamAccountInfo(IUser user)
-        // todo: add choice for every user in guild that has registered (and 'myself')
-        // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
-        // maybe allow command user to mention a user that they want commands for
     {
         await DeferAsync();
         await using var context = new CsgoBotDataContext();

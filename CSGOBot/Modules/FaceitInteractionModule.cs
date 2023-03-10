@@ -1,45 +1,29 @@
-﻿using System;
-using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading.Tasks;
-using CSGOBot.Data.Models;
-using CSGOBot.Enums;
+﻿using CSGOBot.Data.Models;
 using CSGOBot.Services;
 using Discord;
 using Discord.Interactions;
 using InteractionFramework;
 using Repository.DbContexts;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace CSGOBot.Modules;
 
-// Interaction modules must be public and inherit from an IInteractionModuleBase
 public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionContext>
 {
-    // Dependencies can be accessed through Property injection, public properties with public setters will be set by the service provider
-    public InteractionService Commands { get; set; }
-
-    private readonly InteractionHandler _handler;
+    private readonly ILogger<FaceitInteractionModule> _logger;
     private readonly FaceitService _faceit;
-    //private readonly HltvApiService _hltvApiService;
-    //private readonly ProSettingsScraperService _proSettingsScraperService;
-        
-
-    // Constructor injection is also a valid way to access the dependencies
-    public FaceitInteractionModule(
-        InteractionHandler handler,
-        FaceitService faceit)
+    
+    public FaceitInteractionModule(ILogger<FaceitInteractionModule> logger, FaceitService faceit)
     {
-        _handler = handler;
+        _logger = logger;
         _faceit = faceit;
-        //_hltvApiService = hltvApiService;
-        //_proSettingsScraperService = proSettingsScraperService;
     }
 
     [UserCommand("faceitinfo")]
     public async Task FaceitPlayerInfo(IUser user)
-    // todo: add choice for every user in guild that has registered (and 'myself')
-    // maybe a bad idea? i believe arguments for slash commands are limited to like 20-30
-    // maybe allow command user to mention a user that they want commands for
     {
         await DeferAsync();
         await using var context = new CsgoBotDataContext();
@@ -48,6 +32,7 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
         // user does not exist
         if (dbUser == null)
         {
+            Log.Logger.Error("");
             var embed = new EmbedBuilder()
                 .WithTitle($"{user.Username} is not registered")
                 .WithDescription($"Discord user {user.Username} does not exist in database. They should execute the /register faceit command to register.")
@@ -71,6 +56,7 @@ public class FaceitInteractionModule : InteractionModuleBase<SocketInteractionCo
         // user and faceit info exists
         else  if (dbUser.FaceitPlayerId != null)
         {
+            _logger.LogDebug($"Faceit id {dbUser.FaceitPlayerId} info was requested for Discord user ID {user.Id}.");
             var faceitPlayer  = await _faceit.GetPlayerInfo(dbUser.FaceitPlayerId);
 
             var embed = new EmbedBuilder()
