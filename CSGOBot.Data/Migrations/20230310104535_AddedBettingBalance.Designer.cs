@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.DbContexts;
 
@@ -10,9 +11,11 @@ using Repository.DbContexts;
 namespace Repository.Migrations
 {
     [DbContext(typeof(CsgoBotDataContext))]
-    partial class CsgoBotDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230310104535_AddedBettingBalance")]
+    partial class AddedBettingBalance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +29,7 @@ namespace Repository.Migrations
                         .HasColumnType("bigint unsigned");
 
                     b.Property<double>("BettingBalance")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("double")
-                        .HasDefaultValue(100.0);
+                        .HasColumnType("double");
 
                     b.Property<Guid?>("FaceitPlayerId")
                         .HasColumnType("char(36)");

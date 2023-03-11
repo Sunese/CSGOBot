@@ -14,4 +14,5 @@ public class User
     public string Name { get; set; }
     public string? SteamID64 { get; set; }
     public Guid? FaceitPlayerId { get; set; }
+    public double BettingBalance { get; set; }
 }

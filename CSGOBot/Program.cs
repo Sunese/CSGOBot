@@ -46,6 +46,8 @@ public class Program
             .AddScoped<ProSettingsScraperService>()
             .AddScoped<SteamService>()
             .AddScoped<FaceitService>()
+            .AddScoped<UserService>()
+            .AddScoped<BettingService>()
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<InteractionHandler>()
