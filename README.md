@@ -1,3 +1,3 @@
-# CrosshairBot
+# CSGOBot
 
-A Discord bot that gives CS:GO Crosshair codes. Possibly of pros. Possibly of top pro players weekly.
+A Discord bot with features related to CS:GO gamers B-)
