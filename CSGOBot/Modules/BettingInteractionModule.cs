@@ -51,4 +51,6 @@ public class BettingInteractionModule : InteractionModuleBase<SocketInteractionC
             await FollowupAsync(embed: embed);
         }
     }
+
+
 }

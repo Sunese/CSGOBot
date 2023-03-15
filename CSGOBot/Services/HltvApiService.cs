@@ -65,6 +65,11 @@ public class HltvApiService
         return response;
     }
 
+    public async Task<List<HltvMatch>> GetHltvMatchesAsync(string from, string to, bool topTier)
+    {
+        return new List<HltvMatch>();
+    }
+
     public async Task<List<HltvPlayer>> Send(string url)
     {
         var response = await _httpClient.GetAsync(url);
@@ -79,6 +84,11 @@ public class HltvApiService
             throw new Exception("Deserialization into HltvPlayerList gave null");
         }
         return stats;
+    }
+
+    public class HltvMatch
+    {
+        public string id;
     }
 
     public class HltvPlayer
